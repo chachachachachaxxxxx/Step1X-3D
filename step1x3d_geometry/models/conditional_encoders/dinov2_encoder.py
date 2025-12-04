@@ -136,7 +136,8 @@ class Dinov2Encoder(BaseVisualEncoder, ModelMixin):
         self.image_preprocess_dino = AutoImageProcessor.from_pretrained(
             self.cfg.dino_type
             if self.cfg.pretrained_dino_name_or_path is None
-            else self.cfg.pretrained_dino_name_or_path
+            else self.cfg.pretrained_dino_name_or_path,
+            use_fast=False,
         )
         self.transform_dino = transforms.Compose(
             [
