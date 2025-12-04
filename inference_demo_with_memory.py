@@ -126,7 +126,7 @@ out = geometry_pipeline(input_image_path, guidance_scale=7.5, num_inference_step
 record_memory("几何生成完成")
 
 # export untextured mesh as .glb format
-out.mesh[0].export("untexture_mesh.glb")
+out.mesh[0].export("examples/my_examples/untexture_mesh.glb")
 record_memory("几何网格导出完成")
 
 
@@ -139,7 +139,7 @@ import trimesh
 
 # load untextured mesh
 print("加载未纹理网格...")
-untexture_mesh = trimesh.load("untexture_mesh.glb")
+untexture_mesh = trimesh.load("examples/my_examples/untexture_mesh.glb")
 record_memory("未纹理网格加载完成")
 
 # define texture_pipeline
@@ -159,7 +159,7 @@ textured_mesh = texture_pipeline(input_image_path, untexture_mesh)
 record_memory("纹理合成完成")
 
 # export textured mesh as .glb format
-textured_mesh.export("textured_mesh.glb")
+textured_mesh.export("examples/my_examples/textured_mesh.glb")
 record_memory("纹理网格导出完成")
 
 # 绘制显存占用图表并打印摘要
