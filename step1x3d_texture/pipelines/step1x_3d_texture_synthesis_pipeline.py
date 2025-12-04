@@ -162,6 +162,8 @@ class Step1X3DTexturePipeline:
             model_, name_ = lora_model.rsplit("/", 1)
             pipe.load_lora_weights(model_, weight_name=name_)
 
+        pipe.enable_model_cpu_offload()
+
         return pipe
 
     def remove_bg(self, image, net, transform, device):

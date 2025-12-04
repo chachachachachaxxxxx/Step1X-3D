@@ -148,6 +148,11 @@ class DecoupledMVRowSelfAttnProcessor2_0(torch.nn.Module):
                 ]
             )
 
+    # 1. 新增方法
+    def set_cache_storage(self, storage):
+        self.cache_storage = storage
+
+    # 2. 修改 __call__ 方法的开头
     def __call__(
         self,
         attn: Attention,
@@ -180,6 +185,10 @@ class DecoupledMVRowSelfAttnProcessor2_0(torch.nn.Module):
         if num_views is not None:
             self.num_views = num_views
 
+        # 优先使用注入的 storage
+        if hasattr(self, "cache_storage") and self.cache_storage is not None:
+            cache_hidden_states = self.cache_storage
+            
         # NEW: cache hidden states for reference unet
         if cache_hidden_states is not None:
             cache_hidden_states[self.name] = hidden_states.clone()
@@ -438,7 +447,11 @@ class DecoupledMVRowColSelfAttnProcessor2_0(torch.nn.Module):
                     nn.Dropout(0.0),
                 ]
             )
+    # 1. 新增方法
+    def set_cache_storage(self, storage):
+        self.cache_storage = storage
 
+    # 2. 修改 __call__ 方法的开头
     def __call__(
         self,
         attn: Attention,
@@ -471,6 +484,10 @@ class DecoupledMVRowColSelfAttnProcessor2_0(torch.nn.Module):
         if num_views is not None:
             self.num_views = num_views
 
+        # 优先使用注入的 storage
+        if hasattr(self, "cache_storage") and self.cache_storage is not None:
+            cache_hidden_states = self.cache_storage
+            
         # NEW: cache hidden states for reference unet
         if cache_hidden_states is not None:
             cache_hidden_states[self.name] = hidden_states.clone()

@@ -680,6 +680,12 @@ class IG2MVSDXLPipeline(StableDiffusionXLPipeline, CustomAdapterMixin):
         with torch.no_grad():
             ref_timesteps = torch.zeros_like(timesteps[0])
             ref_hidden_states = {}
+            
+            # === 新增：手动注入 ref_hidden_states 到所有 processor ===
+            for name, proc in self.unet.attn_processors.items():
+                if hasattr(proc, "set_cache_storage"):
+                    proc.set_cache_storage(ref_hidden_states)
+            # ======================================================
 
             self.unet(
                 reference_latents,
@@ -700,6 +706,13 @@ class IG2MVSDXLPipeline(StableDiffusionXLPipeline, CustomAdapterMixin):
                 k: v.repeat_interleave(num_images_per_prompt, dim=0)
                 for k, v in ref_hidden_states.items()
             }
+
+            # === 新增：用完后清理，防止内存泄漏 ===
+            for name, proc in self.unet.attn_processors.items():
+                if hasattr(proc, "set_cache_storage"):
+                    proc.set_cache_storage(None)
+            # ======================================================
+            
         if self.do_classifier_free_guidance:
             ref_hidden_states = {
                 k: torch.cat([torch.zeros_like(v), v], dim=0)
