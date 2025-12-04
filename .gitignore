@@ -15,3 +15,6 @@ temp
 .cursor
 data/shape_diffusion/jewelry
 debug_output
+examples/my_examples
+examples/jewelry
+wandb
