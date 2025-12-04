@@ -9,3 +9,9 @@ step1x3d_texture/custom_rasterizer/custom_rasterizer.egg-info
 step1x3d_texture/differentiable_renderer/build
 step1x3d_texture/differentiable_renderer/dist
 step1x3d_texture/differentiable_renderer/mesh_processor.egg-info
+
+# xx 项目相关
+temp
+.cursor
+data/shape_diffusion/jewelry
+debug_output
