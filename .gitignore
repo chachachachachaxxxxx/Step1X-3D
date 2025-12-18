@@ -18,3 +18,5 @@ debug_output
 examples/my_examples
 examples/jewelry
 wandb
+jewelry/remove_bg/images
+Step1X-3D.code-workspace

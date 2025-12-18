@@ -387,7 +387,7 @@ def convert_normal_to_webp(src: str, dst: str, src_render: str):
         alpha_channel = load_image(src_render, 4)[:, :, 3]
         for i in range(alpha_channel.shape[0]):
             for j in range(alpha_channel.shape[1]):
-                alpha_channel[i][j] = 256 if alpha_channel[i][j] > 0 else 0
+                alpha_channel[i][j] = 255 if alpha_channel[i][j] > 0 else 0
         normal_map = np.concatenate(
             (normal_map, alpha_channel[:, :, np.newaxis]), axis=2
         )
@@ -401,6 +401,57 @@ def convert_normal_to_webp(src: str, dst: str, src_render: str):
     # basename = os.path.basename(dst).split('.')[0]
     # save_path = os.path.join(root, basename+'.'+save_type)
     # cv2.imwrite(save_path, normal_unit16)
+
+
+def convert_depth_to_webp(src: List[str], dst: List[str]) -> Tuple[float, float]:
+    """Convert depth EXR images to PNG format with normalization.
+
+    Args:
+        src: List of input EXR image paths
+        dst: List of output PNG image paths
+
+    Returns:
+        Tuple[float, float]: (min_depth, scale) - The minimum depth value and scale factor used for normalization
+    """
+    # Read all depth images
+    depth_images = []
+    valid_masks = []
+    min_depth = float("inf")
+    max_depth = float("-inf")
+
+    for path in src:
+        # Read EXR image
+        # Explicitly specify format to avoid misidentification (e.g. as SPE)
+        depth = imageio.imread(path, format="EXR")
+        # Create mask for valid depth values
+        mask = np.ones_like(depth, dtype=float)
+        mask[depth > 1000.0] = 0.0
+        depth[~(mask > 0.5)] = 0.0
+
+        # Update min and max depth values
+        valid_depths = depth[mask > 0.5]
+        if len(valid_depths) > 0:
+            min_depth = min(min_depth, valid_depths.min())
+            max_depth = max(max_depth, valid_depths.max())
+
+        depth_images.append(depth)
+        valid_masks.append(mask)
+
+    # Calculate scale factor for normalization
+    scale = 255.0 / (max_depth - min_depth) if max_depth > min_depth else 1.0
+
+    # Process and save each image
+    for depth, mask, output_path in zip(depth_images, valid_masks, dst):
+        # Normalize depth values
+        normalized_depth = (depth - min_depth) * scale
+        # Apply mask
+        normalized_depth[~(mask > 0.5)] = 0.0
+        # Convert to uint8
+        depth_uint8 = normalized_depth.astype(np.uint8)
+        # Save as PNG
+        imageio.imwrite(output_path, depth_uint8)
+
+    return min_depth, scale
 
 def load_image(file_path: str, num_channels: int = 3) -> np.ndarray:
     """Load the image at the given path returns its pixels as a numpy array.
