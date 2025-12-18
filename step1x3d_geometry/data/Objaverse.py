@@ -56,6 +56,12 @@ class ObjaverseDataModule(pl.LightningDataModule):
         )
 
     def train_dataloader(self) -> DataLoader:
+        # [修复] 如果 train_dataset 缺失，手动触发 setup("fit")。
+        # 这是必须的，因为 DeepSpeed 策略即使在运行测试模式 (trainer.test()) 时，
+        # 也可能尝试访问 train_dataloader 来自动配置 batch size。
+        # 如果没有这个检查，它会引发 AttributeError: 'ObjaverseDataModule' object has no attribute 'train_dataset'。
+        if not hasattr(self, "train_dataset"):
+            self.setup(stage="fit")
         return self.general_loader(
             self.train_dataset,
             batch_size=self.cfg.batch_size,

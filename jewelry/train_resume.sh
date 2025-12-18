@@ -1,0 +1,1 @@
+python train.py --config ./configs/train-geometry-diffusion/jewelry-3d-geometry.yaml --train --gpu 0 resume=outputs/step1x-3d-geometry/jewelry-lora/michelangelo-autoencoder+n32768+AdamWlr0.0001@20251204-203327/ckpts/last.ckpt 

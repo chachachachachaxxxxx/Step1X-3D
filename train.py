@@ -281,6 +281,15 @@ def main(args, extras) -> None:
     def set_system_status(system: BaseSystem, ckpt_path: Optional[str]):
         if ckpt_path is None:
             return
+        
+        # [修复] DeepSpeed 将检查点保存为包含分片权重的目录。
+        # 标准的 torch.load() 遇到目录时会抛出 IsADirectoryError 错误。
+        # 当使用 DeepSpeed 策略时，Trainer 会通过 `ckpt_path` 参数内部处理检查点的加载。
+        # 我们在此处跳过手动加载状态字典，以避免错误并依赖 Trainer 的机制。
+        if os.path.isdir(ckpt_path):
+            print(f"Detected DeepSpeed checkpoint directory: {ckpt_path}. Skipping manual state loading in set_system_status.")
+            return
+
         ckpt = torch.load(ckpt_path, map_location="cpu")
         system.set_resume_status(ckpt["epoch"], ckpt["global_step"])
 
