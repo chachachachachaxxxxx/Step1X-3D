@@ -1,0 +1,1 @@
+python /home/wangxinxing/code/Step1X-3D/inference_lora.py --config /home/wangxinxing/code/Step1X-3D/jewelry/inference/configs/TR017249-GD01_12231436.yaml

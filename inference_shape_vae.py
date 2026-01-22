@@ -45,7 +45,7 @@ def geometry_vae_pipeline(input_shape_path, save_glb_path, n_samples=32768):
         shape_latents,
         mc_level=0.0,
         bounds=1.05,
-        octree_resolution=512,
+        octree_resolution=256,
         enable_pbar=True,
     )
 
@@ -68,5 +68,20 @@ def geometry_vae_pipeline(input_shape_path, save_glb_path, n_samples=32768):
     mesh.export(save_glb_path)
 
 if __name__ == "__main__":
-    image_path = "./data/shape_autoencoder/objaverse/surfaces/000-000/00a1a602456f4eb188b522d7ef19e81b.npz"
-    geometry_vae_pipeline(image_path, "output/00a1a602456f4eb188b522d7ef19e81b.glb")
+    # image_path = "./data/shape_autoencoder/objaverse/surfaces/000-000/00a1a602456f4eb188b522d7ef19e81b.npz"
+    # geometry_vae_pipeline(image_path, "examples/my_examples/00a1a602456f4eb188b522d7ef19e81b.glb")
+
+    # image_path = "/cache/wangxinxing/data/jewelry/shape_diffusion_jewelry_render_1223/surfaces/TE119940-GD01.npz"
+    # save_glb_path = "jewelry/inference/recon/TE119940-GD01_reconstructed_2.glb"
+
+    # image_path = "/home/wangxinxing/code/Step1X-3D/data/shape_diffusion/objaverse/surfaces/000-000/00a1a602456f4eb188b522d7ef19e81b.npz"
+    # save_glb_path = "jewelry/inference/recon/00a1a602456f4eb188b522d7ef19e81b.glb"
+
+    # image_path = "/home/wangxinxing/code/Step1X-3D/jewelry/inference/recon/00a1a602456f4eb188b522d7ef19e81b/samples.npz"
+    # save_glb_path = "jewelry/inference/recon/00a1a602456f4eb188b522d7ef19e81b_code_sample.glb"
+    # right normal sample
+    image_path = "/home/wangxinxing/code/Step1X-3D/jewelry/inference/recon_right_normal/00a1a602456f4eb188b522d7ef19e81b/samples.npz"
+    save_glb_path = "jewelry/inference/recon_right_normal/00a1a602456f4eb188b522d7ef19e81b_right_normal_sample.glb"
+
+    geometry_vae_pipeline(image_path, save_glb_path)
+
